@@ -50,6 +50,7 @@ const App = () => {
           Panier ({cart.reduce((total, item) => total + item.quantity, 0)})
         </Link>
       </header>
+      <ProductsPage/>
       <Routes>
         <Route
           path="/"
