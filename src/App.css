@@ -1,0 +1,21 @@
+/* App.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: #fff;
+}
+
+.logo {
+  font-size: 24px;
+  text-decoration: none;
+  color: #fff;
+}
+
+.cartLink {
+  font-size: 18px;
+  text-decoration: none;
+  color: #fff;
+}
