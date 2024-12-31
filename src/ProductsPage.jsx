@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; // Styles pour react-toastify
 import "./ProductsPage.css"; // Importer le fichier CSS
 
 const ProductsPage = ({ addToCart }) => {
@@ -8,6 +6,8 @@ const ProductsPage = ({ addToCart }) => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true); // État pour le chargement
+  const [notification, setNotification] = useState(null); // État pour la notification
 
   // Récupération des produits depuis l'API
   useEffect(() => {
@@ -23,10 +23,12 @@ const ProductsPage = ({ addToCart }) => {
           ...new Set(data.map((product) => product.category)),
         ];
         setCategories(uniqueCategories);
+        setLoading(false); // Indique que le chargement est terminé
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération des produits:", error);
-        toast.error("Erreur lors de la récupération des produits.");
+        showNotification("Erreur lors de la récupération des produits.", "error");
+        setLoading(false); // Arrêter le chargement même en cas d'erreur
       });
   }, []);
 
@@ -42,76 +44,90 @@ const ProductsPage = ({ addToCart }) => {
     );
   };
 
+  // Fonction d'affichage des notifications personnalisées
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type });
+
+    // Supprimer la notification après 3 secondes
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  };
+
   // Fonction d'ajout au panier avec notification
   const handleAddToCart = (product) => {
     addToCart(product);
-    toast.success(`${product.title} ajouté au panier !`, {
-      position: toast.POSITION.BOTTOM_CENTER,
-      autoClose: 3000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-    });
+    showNotification(`${product.title} ajouté au panier !`);
   };
 
   return (
     <div className="container">
       <h1>Produits</h1>
 
-      <div className="filterContainer">
-        <label className="filterLabel">Filtrer by categorie: </label>
-        <select
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          className="filterSelect"
-        >
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-      </div>
+      {/* Notification personnalisée */}
+      {notification && (
+        <div className={`notification ${notification.type}`}>
+          {notification.message}
+        </div>
+      )}
 
-      <div className="productGrid">
-        {filteredProducts.map((product) => (
-          <div key={product.id} className="productCard">
-            <img src={product.image} alt={product.title} className="image" />
-            <div className="info">
-              <h3 className="title">{product.title}</h3>
-              <div className="prices">
-                {product.oldPrice && (
-                  <span className="oldPrice">${product.oldPrice.toFixed(2)}</span>
-                )}
-                <span className="newPrice">${product.price.toFixed(2)}</span>
-              </div>
-              <div className="rating">
-                {/* Crée une étoile pleine ou vide selon la note */}
-                {Array.from({ length: 5 }, (_, index) => (
-                  <span
-                    key={index}
-                    style={{
-                      color: index < product.rating.rate ? "#FFD700" : "#ccc",
-                      fontSize: "24px",
-                    }}
-                  >
-                    ★
-                  </span>
-                ))}
-              </div>
-              <button
-                className="addButton"
-                onClick={() => handleAddToCart(product)} // Ajouter au panier et afficher la notification
-              >
-                Ajouter au Panier
-              </button>
-            </div>
+      {/* Indicateur de chargement */}
+      {loading ? (
+        <p>Chargement des produits...</p>
+      ) : (
+        <>
+          <div className="filterContainer">
+            <label className="filterLabel">Filtrer par catégorie: </label>
+            <select
+              value={selectedCategory}
+              onChange={handleCategoryChange}
+              className="filterSelect"
+            >
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
           </div>
-        ))}
-      </div>
 
-      {/* ToastContainer pour afficher les notifications */}
-      <ToastContainer />
+          <div className="productGrid">
+            {filteredProducts.map((product) => (
+              <div key={product.id} className="productCard">
+                <img src={product.image} alt={product.title} className="image" />
+                <div className="info">
+                  <h3 className="title">{product.title}</h3>
+                  <div className="prices">
+                    {product.oldPrice && (
+                      <span className="oldPrice">${product.oldPrice.toFixed(2)}</span>
+                    )}
+                    <span className="newPrice">${product.price.toFixed(2)}</span>
+                  </div>
+                  <div className="rating">
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <span
+                        key={index}
+                        style={{
+                          color: index < product.rating.rate ? "#FFD700" : "#ccc",
+                          fontSize: "24px",
+                        }}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    className="addButton"
+                    onClick={() => handleAddToCart(product)}
+                  >
+                    Ajouter au Panier
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

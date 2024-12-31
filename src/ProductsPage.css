@@ -9,11 +9,16 @@
     margin-bottom: 20px;
     display: flex;
     align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background-color: #ddd;
+    border-radius: 10px;
   }
   
   .filterLabel {
     margin-right: 10px;
     font-size: 16px;
+    /* margin-left: 30%; */
   }
   
   .filterSelect {
@@ -83,5 +88,43 @@
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+  }
+  .notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    z-index: 1000;
+    color: #fff;
+    animation: fadeInOut 3s ease-in-out;
+  }
+  
+  .notification.success {
+    background-color: #0cf8c1;
+  }
+  
+  .notification.error {
+    background-color: #dc3545;
+  }
+  
+  @keyframes fadeInOut {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    10% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    90% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
   }
   
