@@ -50,17 +50,17 @@ const App = () => {
           Panier ({cart.reduce((total, item) => total + item.quantity, 0)})
         </Link>
       </header>
-      <ProductsPage/>
       <Routes>
-        <Route
+        {/* <Route
           path="/"
           element={<ProductsPage addToCart={addToCart} />}
-        />
+        /> */}
         <Route
           path="/cart"
           element={<CartPage cart={cart} addToCart={addToCart} removeFromCart={removeFromCart} />}
         />
       </Routes>
+      <ProductsPage addToCart={addToCart} />
       <Footer /> 
     </Router>
   );
